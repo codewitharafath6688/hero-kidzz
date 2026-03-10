@@ -32,15 +32,15 @@ const Login = () => {
     const result = await signIn("credentials", {
       email: form.email,
       password: form.password,
-        redirect: false,
+      redirect: false,
       callbackUrl: params.get("callbackUrl") || "/",
     });
     console.log(result);
     if (!result.ok) {
-      Swal.fire("error", "Email or, password not matched", "error");
+      Swal.fire("error", "Email or, password not matched, Try Google login or, register",  "error");
     } else {
       Swal.fire("success", "Successfully Login", "success");
-      router.push("/");
+      router.push(callBack);
     }
 
     // TODO: connect login API

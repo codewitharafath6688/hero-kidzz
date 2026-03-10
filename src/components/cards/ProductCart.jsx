@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
+import CartButton from "../buttons/CartButton";
 
 const ProductCard = ({ product }) => {
   const discountedPrice =
@@ -55,14 +56,11 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Button */}
-        <div className="card-actions mt-3">
-          <button className="btn bg-[#F7962F] text-white btn-sm w-full gap-2">
-            <FaShoppingCart />
-            Add to Cart
-          </button>
+        <div className="flex flex-col justify-center  gap-2 mt-3">
+          <CartButton product={{ ...product, _id: product._id.toString() }} />
           <Link className="w-full" href={`/products/${product._id}`}>
             <button className="btn border-[#F7962F] bg-white hover:text-white hover:bg-[#F7962F] text-[#F7962F] btn-sm w-full gap-2">
-                View Details
+              View Details
             </button>
           </Link>
         </div>

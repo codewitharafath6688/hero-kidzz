@@ -1,11 +1,15 @@
 "use client";
 
 import { postUser } from "@/actions/server/auth";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const Register = () => {
+  const params = useSearchParams();
+  const callBack = params.get("callbackUrl") || "/";
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,10 +34,20 @@ const Register = () => {
     const result = await postUser(form);
     if (result.acknowledged) {
       alert("successfull, please login");
-      router.push("/login");
+      // router.push("/login");
+      const resultLogin = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        redirect: false,
+        callbackUrl: callBack,
+      });
+      if (!resultLogin.ok) {
+        Swal.fire("error", "Email or, password not matched", "error");
+      } else {
+        Swal.fire("success", "Successfully Login", "success");
+        router.push(callBack);
+      }
     }
-    console.log(result);
-    console.log(form);
 
     // TODO: connect register API
   };

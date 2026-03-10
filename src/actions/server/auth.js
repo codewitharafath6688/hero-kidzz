@@ -2,7 +2,6 @@
 
 import { collections, dbConnect } from "@/lib/dbConnect";
 import bcrypt from "bcryptjs";
-import { use } from "react";
 
 export const postUser = async (payload) => {
   const { email, password, name } = payload;
@@ -46,7 +45,7 @@ export const loginUser = async (payload) => {
   }
   const isMatched = await bcrypt.compare(password, user.password);
   if (isMatched) {
-    return use;
+    return user;
   } else {
     return null;
   }
