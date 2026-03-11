@@ -4,6 +4,8 @@
 
 Hero Kidzz is a small, single-vendor e-commerce web application designed for selling children's products. This repository contains all project assets including images, icons, and media files.
 
+Live Link: https://hero-kidzz-woad.vercel.app/
+
 ## Features
 
 - 🛍️ **Product Catalog** - Browse children's toys and accessories
