@@ -33,12 +33,13 @@ const ProductDetailsPage = async ({ params }) => {
     return <h2>Product Details not found.</h2>;
   }
 
-  const discountedPrice = Math.round(
-    product.price - (product.price * product.discount) / 100,
-  );
+  const price = Number(product.price) || 0;
+  const discount = Number(product.percentage ?? product.discount ?? 0) || 0;
+  const discountedPrice = Math.round(price - (price * discount) / 100);
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
+    const safeRating = Number(rating) || 0;
+    const fullStars = Math.floor(safeRating);
     const emptyStars = 5 - fullStars;
 
     return (
@@ -97,16 +98,24 @@ const ProductDetailsPage = async ({ params }) => {
 
           <div className="bg-base-200 rounded-2xl p-5 space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-3xl font-bold text-primary">
-                ৳{discountedPrice}
-              </span>
-              <span className="text-lg line-through text-base-content/50">
-                ৳{product.price}
-              </span>
-              <div className="badge badge-error gap-1 text-white p-3">
-                <FaTag />
-                {product.discount}% OFF
-              </div>
+              {discount > 0 ? (
+                <>
+                  <span className="text-3xl font-bold text-primary">
+                    ৳{discountedPrice.toLocaleString()}
+                  </span>
+                  <span className="text-lg line-through text-base-content/50">
+                    ৳{price.toLocaleString()}
+                  </span>
+                  <div className="badge badge-error gap-1 text-white p-3">
+                    <FaTag />
+                    {discount}% OFF
+                  </div>
+                </>
+              ) : (
+                <span className="text-3xl font-bold text-primary">
+                  ৳{price.toLocaleString()}
+                </span>
+              )}
             </div>
 
             <CartButton product={product} />

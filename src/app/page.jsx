@@ -16,7 +16,7 @@ export default async function Home() {
       <Banner/>
      </section>
      <section>
-      <Products/>
+      <Products limit={6}/>
      </section>
     </div>
   );
