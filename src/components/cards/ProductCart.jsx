@@ -5,26 +5,26 @@ import CartButton from "../buttons/CartButton";
 
 const ProductCard = ({ product }) => {
   const price = Number(product.price) || 0;
-  const percentage = Number(product.percentage) || 0;
-  const discountedPrice = price - (price * percentage) / 100;
+  const percentage = Number(product.percentage ?? product.discount ?? 0) || 0;
+  const discountedPrice = Math.round(price - (price * percentage) / 100);
 
   return (
-    <div className="card bg-base-100 shadow-md border border-base-200 hover:shadow-xl transition">
+    <div className="card border border-base-200 bg-base-100 shadow-md transition hover:shadow-xl">
       <figure className="p-4">
         <Image
           src={product.image}
           alt={product.title}
           width={400}
           height={300}
-          className="rounded-xl object-cover h-56 w-full"
+          className="h-56 w-full rounded-xl object-cover"
         />
       </figure>
 
       <div className="card-body pt-0">
-        <h2 className="card-title text-base line-clamp-2">{product.title}</h2>
+        <h2 className="card-title line-clamp-2 text-base">{product.title}</h2>
 
         <div className="flex items-center gap-2 text-sm">
-          <span className="flex items-center gap-1 text-warning">
+          <span className="text-warning flex items-center gap-1">
             <FaStar />
             {product.ratings}
           </span>
@@ -33,27 +33,30 @@ const ProductCard = ({ product }) => {
 
         <p className="text-sm text-gray-500">Sold: {product.sold}</p>
 
-        <div className="flex items-center gap-2 mt-1">
-          <span className="text-lg font-bold text-primary">
-            ৳{discountedPrice.toLocaleString()}
-          </span>
-
-          {percentage > 0 && (
+        <div className="mt-1 flex items-center gap-2">
+          {percentage > 0 ? (
             <>
-              <span className="line-through text-sm text-gray-400">
+              <span className="text-primary text-lg font-bold">
+                ৳{discountedPrice.toLocaleString()}
+              </span>
+              <span className="text-sm text-gray-400 line-through">
                 ৳{price.toLocaleString()}
               </span>
               <span className="badge badge-success text-xs">
                 {percentage}% OFF
               </span>
             </>
+          ) : (
+            <span className="text-primary text-lg font-bold">
+              ৳{price.toLocaleString()}
+            </span>
           )}
         </div>
 
-        <div className="flex flex-col justify-center gap-2 mt-3">
+        <div className="mt-3 flex flex-col justify-center gap-2">
           <CartButton product={{ ...product, _id: product._id.toString() }} />
           <Link className="w-full" href={`/products/${product._id}`}>
-            <button className="btn border-[#F7962F] bg-white hover:text-white hover:bg-[#F7962F] text-[#F7962F] btn-sm w-full gap-2">
+            <button className="btn btn-sm w-full gap-2 border-[#F7962F] bg-white text-[#F7962F] hover:bg-[#F7962F] hover:text-white">
               View Details
             </button>
           </Link>
