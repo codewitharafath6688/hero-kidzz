@@ -20,7 +20,8 @@ const Cart = ({ cartItem }) => {
     _id,
   } = cartItem;
 
-  const [cartQuantity, setCartQuantity] = useState(quantity || 1);
+  const safePrice = Number(price) || 0;
+  const [cartQuantity, setCartQuantity] = useState(Number(quantity) || 1);
   const [isPending, startTransition] = useTransition();
 
   const handleIncrease = () => {
@@ -29,7 +30,7 @@ const Cart = ({ cartItem }) => {
 
       if (result.success) {
         setCartQuantity((prev) => prev + 1);
-        Swal.fire("success", "Quantity increased", "success");
+        Swal.fire("Success", "Quantity increased", "success");
         router.refresh();
       } else {
         Swal.fire({
@@ -42,12 +43,14 @@ const Cart = ({ cartItem }) => {
   };
 
   const handleDecrease = () => {
+    if (cartQuantity <= 1) return;
+
     startTransition(async () => {
       const result = await decreaseItem(_id, cartQuantity);
 
       if (result.success) {
         setCartQuantity((prev) => prev - 1);
-        Swal.fire("success", "Quantity decreased", "success");
+        Swal.fire("Success", "Quantity decreased", "success");
         router.refresh();
       } else {
         Swal.fire({
@@ -77,6 +80,7 @@ const Cart = ({ cartItem }) => {
             text: "Your cart item has been deleted.",
             icon: "success",
           });
+          router.refresh();
         } else {
           Swal.fire({
             title: "Oops!",
@@ -108,7 +112,9 @@ const Cart = ({ cartItem }) => {
               </p>
               <p className="text-sm">Customer: {username}</p>
               <p className="text-sm text-base-content/70">{email}</p>
-              <p className="text-base font-bold text-primary">৳{price}</p>
+              <p className="text-base font-bold text-primary">
+                ৳{safePrice.toLocaleString()}
+              </p>
             </div>
           </div>
 
@@ -117,7 +123,7 @@ const Cart = ({ cartItem }) => {
               <button
                 onClick={handleDecrease}
                 className="flex h-8 w-8 cursor-pointer items-center justify-center border-r border-base-300"
-                disabled={isPending}
+                disabled={isPending || cartQuantity <= 1}
               >
                 <FiMinus size={14} />
               </button>
@@ -136,7 +142,7 @@ const Cart = ({ cartItem }) => {
             </div>
 
             <p className="text-sm font-medium">
-              Total: ৳{(price * cartQuantity).toFixed(2)}
+              Total: ৳{(safePrice * cartQuantity).toLocaleString()}
             </p>
 
             <button

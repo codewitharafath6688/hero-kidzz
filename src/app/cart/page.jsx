@@ -9,11 +9,17 @@ const CartPage = async () => {
   const formattedCartItems = cartItems.map((item) => ({
     ...item,
     _id: item._id.toString(),
+    safePrice: Number(item.price) || 0,
+    safeQuantity: Number(item.quantity) || 1,
   }));
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+  const totalItems = formattedCartItems.reduce(
+    (sum, item) => sum + item.safeQuantity,
+    0,
+  );
+
+  const subtotal = formattedCartItems.reduce(
+    (sum, item) => sum + item.safePrice * item.safeQuantity,
     0,
   );
 
@@ -32,7 +38,7 @@ const CartPage = async () => {
               </h1>
               <p className="mt-2 text-sm text-base-content/70 md:text-base">
                 <span className="font-semibold text-primary">
-                  {cartItems.length}
+                  {formattedCartItems.length}
                 </span>{" "}
                 product types •{" "}
                 <span className="font-semibold text-primary">{totalItems}</span>{" "}
@@ -42,7 +48,7 @@ const CartPage = async () => {
           </div>
         </div>
 
-        {cartItems.length === 0 ? (
+        {formattedCartItems.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-base-300 bg-base-100 p-12 text-center shadow-sm">
             <h2 className="text-2xl font-bold text-base-content">
               Your cart is empty
@@ -54,8 +60,8 @@ const CartPage = async () => {
         ) : (
           <div className="grid gap-6 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-8">
-              {cartItems.map((cartItem) => (
-                <Cart key={cartItem._id.toString()} cartItem={cartItem} />
+              {formattedCartItems.map((cartItem) => (
+                <Cart key={cartItem._id} cartItem={cartItem} />
               ))}
             </div>
 
@@ -73,25 +79,30 @@ const CartPage = async () => {
 
                   <div className="space-y-4 px-5 py-4">
                     <div className="max-h-64 space-y-3 overflow-y-auto pr-1">
-                      {cartItems.map((item) => (
-                        <div
-                          key={item._id.toString()}
-                          className="flex items-start justify-between gap-3 border-b border-base-200 pb-3"
-                        >
-                          <div className="min-w-0 flex-1">
-                            <h3 className="line-clamp-1 text-sm font-semibold text-base-content">
-                              {item.productTitle}
-                            </h3>
-                            <p className="mt-1 text-xs text-base-content/60">
-                              Qty: {item.quantity} × ৳{item.price}
+                      {formattedCartItems.map((item) => {
+                        const itemTotal = item.safePrice * item.safeQuantity;
+
+                        return (
+                          <div
+                            key={item._id}
+                            className="flex items-start justify-between gap-3 border-b border-base-200 pb-3"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <h3 className="line-clamp-1 text-sm font-semibold text-base-content">
+                                {item.productTitle}
+                              </h3>
+                              <p className="mt-1 text-xs text-base-content/60">
+                                Qty: {item.safeQuantity} × ৳
+                                {item.safePrice.toLocaleString()}
+                              </p>
+                            </div>
+
+                            <p className="text-sm font-semibold text-base-content">
+                              ৳{itemTotal.toLocaleString()}
                             </p>
                           </div>
-
-                          <p className="text-sm font-semibold text-base-content">
-                            ৳{(item.price * item.quantity).toFixed(2)}
-                          </p>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     <div className="space-y-3 pt-2">
@@ -103,14 +114,14 @@ const CartPage = async () => {
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-base-content/70">Subtotal</span>
                         <span className="font-medium">
-                          ৳{subtotal.toFixed(2)}
+                          ৳{subtotal.toLocaleString()}
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-base-content/70">Shipping</span>
                         <span className="font-medium">
-                          ৳{shipping.toFixed(2)}
+                          ৳{shipping.toLocaleString()}
                         </span>
                       </div>
 
@@ -121,14 +132,13 @@ const CartPage = async () => {
                           Total Price
                         </span>
                         <span className="text-2xl font-extrabold text-primary">
-                          ৳{totalPrice.toFixed(2)}
+                          ৳{totalPrice.toLocaleString()}
                         </span>
                       </div>
                     </div>
 
                     <Link
-                      href={"/checkOut"}
-                      disabled={!cartItems.length}
+                      href="/checkOut"
                       className="btn btn-primary mt-2 w-full rounded-xl text-base font-semibold"
                     >
                       Confirm Order
