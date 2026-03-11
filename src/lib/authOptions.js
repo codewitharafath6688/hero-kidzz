@@ -34,7 +34,7 @@ export const authOptions = {
         provider: account?.provider,
         name: user.name,
         email: user.email,
-        Image: user.Image,
+        Image: user.image,
         role: "user",
       };
       const result = await dbConnect(collections.USERS).insertOne(newUser);
